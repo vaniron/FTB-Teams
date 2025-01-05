@@ -130,13 +130,17 @@ public class ClientTeamManagerImpl implements ClientTeamManager {
 		return selfKnownPlayer;
 	}
 
+	public UUID getOfflineUUID(String username) {
+		return UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes());
+	}
+
 	public void initSelfDetails(UUID selfTeamID) {
 		selfTeam = teamMap.get(selfTeamID);
-		UUID userId = Minecraft.getInstance().getUser().getProfileId();
-		selfKnownPlayer = knownPlayers.get(userId);
+		UUID offlineUUID = getOfflineUUID(Minecraft.getInstance().getUser().getName());
+		selfKnownPlayer = knownPlayers.get(offlineUUID);
 		if (selfKnownPlayer == null) {
 			FTBTeams.LOGGER.error("Local player id {} was not found in the known players list [{}]! FTB Teams will not be able to function correctly!",
-					userId, String.join(",", knownPlayers.keySet().stream().map(UUID::toString).toList()));
+					offlineUUID, String.join(",", knownPlayers.keySet().stream().map(UUID::toString).toList()));
 		}
 	}
 
